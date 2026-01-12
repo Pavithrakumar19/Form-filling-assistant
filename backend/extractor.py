@@ -1,9 +1,4 @@
-"""
-Smart PDF Extractor - Improved Version
-======================================
-Better name extraction and data handling
-"""
-
+#EXTRATING USING BERT 
 import PyPDF2
 import pdfplumber
 import pytesseract
@@ -14,12 +9,7 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-# Uncomment and set your Tesseract path on Windows
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
-
 class SmartPDFExtractor:
-    """Enhanced PDF extraction with better name detection"""
     
     def __init__(self, pdf_path: str):
         self.pdf_path = pdf_path
@@ -38,7 +28,7 @@ class SmartPDFExtractor:
                     model="deepset/bert-base-cased-squad2",
                     tokenizer="deepset/bert-base-cased-squad2"
                 )
-                print("✓ BERT model loaded")
+                print("BERT model loaded")
             except Exception as e:
                 print(f"Warning: BERT not available - {e}")
                 self.qa_pipeline = None
@@ -89,7 +79,7 @@ class SmartPDFExtractor:
                 print(f"OCR failed: {e}")
         
         self.text = "\n\n".join(texts)
-        print(f"✓ Total extracted: {len(self.text)} characters")
+        print(f"Total extracted: {len(self.text)} characters")
         
         return self.text
     
@@ -112,19 +102,19 @@ class SmartPDFExtractor:
             matches = re.findall(pattern, text, re.IGNORECASE)
             if matches:
                 self.data[key] = matches[0].strip()
-                print(f"✓ Found {key}: {self.data[key]}")
+                print(f"Found {key}: {self.data[key]}")
         
         # Extract NAME with improved logic
         name = self.extract_name_improved()
         if name:
             self.data['name'] = name
-            print(f"✓ Found name: {name}")
+            print(f"Found name: {name}")
         
         # Extract ADDRESS
         address = self.extract_address()
         if address:
             self.data['address'] = address
-            print(f"✓ Found address: {address}")
+            print(f"Found address: {address}")
         
         return self.data
     
