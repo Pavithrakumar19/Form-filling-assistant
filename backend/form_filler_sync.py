@@ -1,7 +1,4 @@
-"""
-Google Form Filler Module - Keep Browser Open Version
-====================================================
-Browser stays open for manual completion
+""" Form Filler Module - Keep Browser Open Version
 """
 
 from playwright.sync_api import sync_playwright, Error as PlaywrightError
@@ -28,11 +25,11 @@ class GoogleFormFiller:
                 try:
                     browser = p.chromium.launch(headless=True)
                     browser.close()
-                    print("✓ Chromium browser is available")
+                    print("Chromium browser is available")
                     return True
                 except PlaywrightError as e:
                     if "Executable doesn't exist" in str(e):
-                        print("\n⚠️  Chromium browser not found. Installing...")
+                        print("\nChromium browser not found. Installing...")
                         self._install_browsers()
                         return True
                     raise
@@ -51,11 +48,11 @@ class GoogleFormFiller:
                 timeout=300
             )
             if result.returncode == 0:
-                print("✓ Chromium browser installed successfully")
+                print("Chromium browser installed successfully")
             else:
                 raise Exception("Browser installation failed")
         except Exception as e:
-            print(f"❌ Error installing browser: {e}")
+            print(f"Error installing browser: {e}")
             print("\nPlease manually run: playwright install chromium")
             raise
     
@@ -66,13 +63,13 @@ class GoogleFormFiller:
     ) -> Tuple[int, int, Optional[str]]:
         """Fill Google Form with extracted data and keep browser open"""
         
-        print(f"\n🌐 Opening form: {url}")
+        print(f"\nOpening form: {url}")
         print("="*60)
         
         # Convert /preview to /viewform
         if '/preview' in url:
             url = url.replace('/preview', '/viewform')
-            print(f"📝 Converted to viewform URL: {url}")
+            print(f"Converted to viewform URL: {url}")
         
         try:
             with sync_playwright() as p:
@@ -94,13 +91,13 @@ class GoogleFormFiller:
                 )
                 
                 page = context.new_page()
-                print("✓ Page created")
+                print("Page created")
                 
                 try:
                     print(f"Loading page...")
                     page.goto(url, wait_until='domcontentloaded', timeout=60000)
                     page.wait_for_timeout(3000)
-                    print("✓ Page loaded\n")
+                    print("Page loaded\n")
                     
                     filled = 0
                     total = 0
@@ -129,7 +126,7 @@ class GoogleFormFiller:
                             value = self.get_value_for_field(q_text_lower, data_dict)
                             
                             if not value:
-                                print(f"    ✗ No matching data (available: {list(data_dict.keys())})\n")
+                                print(f"    No matching data (available: {list(data_dict.keys())})\n")
                                 continue
                             
                             print(f"    → Attempting to fill with: {value}")
@@ -139,17 +136,17 @@ class GoogleFormFiller:
                             
                             if success:
                                 filled += 1
-                                print(f"    ✅ Successfully filled!\n")
+                                print(f"    Successfully filled!\n")
                             else:
-                                print(f"    ⚠️  Could not fill field\n")
+                                print(f"    Could not fill field\n")
                         
                         except Exception as e:
-                            print(f"    ❌ Error: {e}\n")
+                            print(f"    Error: {e}\n")
                             traceback.print_exc()
                             continue
                     
                     print("="*60)
-                    print(f"✅ FILLED {filled}/{total} FIELDS")
+                    print(f"FILLED {filled}/{total} FIELDS")
                     print("="*60 + "\n")
                     
                     # Capture screenshot
@@ -162,14 +159,14 @@ class GoogleFormFiller:
                     
                     # *** KEY CHANGE: Keep browser open indefinitely ***
                     print("\n" + "="*60)
-                    print("🖥️  BROWSER WILL REMAIN OPEN")
+                    print(" BROWSER WILL REMAIN OPEN")
                     print("="*60)
-                    print("\n📝 You can now:")
+                    print("\n You can now:")
                     print("   • Fill any remaining fields manually")
                     print("   • Review the auto-filled data")
                     print("   • Submit the form when ready")
                     print("   • Close the browser window when done")
-                    print("\n⚠️  This terminal will wait until you close the browser...")
+                    print("\n This terminal will wait until you close the browser...")
                     print("="*60 + "\n")
                     
                     # Wait for browser to be closed by user
@@ -184,14 +181,14 @@ class GoogleFormFiller:
                                 # Browser was closed
                                 break
                     except KeyboardInterrupt:
-                        print("\n\n⚠️  Interrupted by user (Ctrl+C)")
+                        print("\n\n Interrupted by user (Ctrl+C)")
                     
-                    print("\n✓ Browser closed. Cleaning up...")
+                    print("\n Browser closed. Cleaning up...")
                     
                     return filled, total, screenshot_name
                     
                 except Exception as e:
-                    print(f"\n❌ Error during form filling: {e}")
+                    print(f"\n Error during form filling: {e}")
                     traceback.print_exc()
                     
                     try:
@@ -200,7 +197,7 @@ class GoogleFormFiller:
                         pass
                     
                     # Still keep browser open even on error
-                    print("\n⚠️  Error occurred, but browser will remain open for manual filling...")
+                    print("\n Error occurred, but browser will remain open for manual filling...")
                     try:
                         while True:
                             try:
@@ -215,7 +212,7 @@ class GoogleFormFiller:
                     raise
                     
         except Exception as e:
-            print(f"\n❌ Fatal Error: {e}")
+            print(f"\n Fatal Error: {e}")
             traceback.print_exc()
             raise
     
@@ -296,7 +293,7 @@ class GoogleFormFiller:
                     try:
                         filled_value = inp.input_value()
                         if filled_value == str(value):
-                            print(f"      ✓ Verified: input contains '{filled_value}'")
+                            print(f"      Verified: input contains '{filled_value}'")
                             return True
                     except:
                         pass
@@ -304,7 +301,7 @@ class GoogleFormFiller:
                     return True
                     
                 except Exception as e:
-                    print(f"      ✗ Failed: {e}")
+                    print(f"      Failed: {e}")
                     continue
         
         print(f"    → Strategy 2: Looking for contenteditable divs...")
@@ -328,12 +325,12 @@ class GoogleFormFiller:
                     
                     return True
                 except Exception as e:
-                    print(f"      ✗ Failed: {e}")
+                    print(f"      Failed: {e}")
                     continue
         except:
             pass
         
-        print(f"    → Strategy 3: Using JavaScript injection...")
+        print(f"     Strategy 3: Using JavaScript injection...")
         
         # Strategy 3: JavaScript injection as last resort
         try:
@@ -343,7 +340,7 @@ class GoogleFormFiller:
                     if not inp.is_visible():
                         continue
                     
-                    print(f"      → Trying JavaScript fill...")
+                    print(f"      Trying JavaScript fill...")
                     
                     page.evaluate(f'''(element) => {{
                         element.value = "{value}";
@@ -355,7 +352,7 @@ class GoogleFormFiller:
                     return True
                     
                 except Exception as e:
-                    print(f"      ✗ Failed: {e}")
+                    print(f"       Failed: {e}")
                     continue
         except:
             pass
